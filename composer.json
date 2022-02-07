@@ -1,0 +1,29 @@
+{
+    "name": "vaultke/sword",
+    "description": "This is a custom YII2 Templating Engine for APIs.",
+    "keywords": ["api", "microservices", "library"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ananda Douglas",
+            "email": "douglasdaggs@gmail.com"
+        }
+    ],
+    "type": "library",
+    "require": {
+		"php": ">=8.0",
+        "yiisoft/yii2": "*",
+        "guzzlehttp/guzzle": "*"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "vaultke\\sword\\": "src/"
+        }
+    }
+}
