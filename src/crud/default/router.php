@@ -178,7 +178,7 @@ return [
 'PATCH <?=$item?>/{id}'  => '<?=$item?>/restore',
 
 /**
-* @OA\Patch(path="/<?=$item?>/{id}/status",
+* @OA\Patch(path="/change-<?=$item?>-status/{id}",
 *    tags={"<?=$model?>"},
 *    summary="Changes status of  <?=$model?> model.",
 *   @OA\Parameter(description="<?= $model ?> unique ID to change status",in="path",name="id",required=true,@OA\Schema(type="string",)),
@@ -191,7 +191,7 @@ return [
 *     ),
 * )
 */
-'PATCH <?=$item?>/{id}/status'  => '<?=$item?>/restore',
+'PATCH change-<?=$item?>-status/{id}'  => '<?=$item?>/status',
 ];
 
 

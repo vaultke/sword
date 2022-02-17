@@ -103,6 +103,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     {
         if(Yii::$app->user->can('<?=strtolower($_ENV['APP_CONTEXT'].'_'.$modelClass.'_create')?>')){
             $model = new <?= $modelClass ?>();
+            $model->loadDefaultValues();
             $dataRequest['<?= $modelClass ?>'] = Yii::$app->request->getBodyParams();
             if($model->load($dataRequest) && $model->save()) {
                 return $this->payloadResponse($model,['statusCode'=>201,'message'=>'<?= $modelClass ?> added successfully']);
@@ -140,8 +141,11 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         if(Yii::$app->user->can('<?=strtolower($_ENV['APP_CONTEXT'].'_'.$modelClass.'_status')?>')){
             $dataRequest['<?= $modelClass ?>'] = Yii::$app->request->getBodyParams();
             $model = $this->findModel($id);
-            if($model->load($dataRequest) && $model->save()) {
-                return $this->payloadResponse($this->findModel($id),['statusCode'=>202,'message'=>'<?= $modelClass ?> status changed successfully']);
+            if(isset($dataRequest['<?= $modelClass ?>']['status'])){
+                $model->status = $dataRequest['<?= $modelClass ?>']['status'] ;
+                if($model->save(false)){
+                    return $this->payloadResponse($this->findModel($id),['statusCode'=>202,'message'=>'<?= $modelClass ?> status changed successfully']);
+                }
             }
             return $this->errorResponse($model->getErrors()); 
         }
