@@ -36,7 +36,6 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     /**
      * @var string the name of the column storing encrypted row ID
      */
-    public $cryptKey = '<?=strtolower($className)?>';
 
     public static function tableName()
     {
@@ -48,7 +47,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
         <?php foreach ($properties as $property => $data): 
             $field="'".$property."'";
             if($property == 'status'){ $tag = "$";
-                $field = "'status'=>function(".$tag."model){
+                $field = "'recordStatus'=>function(".$tag."model){
                         if(".$tag."model->is_deleted){
                             return ".$tag."this->loadStatus(8);
                         }else{

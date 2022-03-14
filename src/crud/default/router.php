@@ -48,13 +48,8 @@ return [
  * path="/<?=$item?>",
  * summary="Creates a new <?=$model?> model ",
  * tags={"<?=$model?>"},
- * @OA\RequestBody(
- *    required=true,
- *    description="Fill in <?=$item?> data",
- *    @OA\JsonContent(
- *       required={<?=$generator->generateRequiredRules()?>},
- *       ref="#/components/schemas/<?=$model?>",
- *    ),
+ * @OA\RequestBody(required=true,description="Fill in <?=$item?> data",
+ *    @OA\JsonContent(required={<?=$generator->generateRequiredRules()?>},ref="#/components/schemas/<?=$model?>"),
  * ),
  * @OA\Response(
  *    response=201,
@@ -113,9 +108,7 @@ return [
 *     tags={"<?=$model?>"},
 *     summary="Updates an existing <?=$model?> model",
 *     @OA\Parameter(description="<?= $model ?> unique ID to load and update",in="path",name="id",required=true,@OA\Schema(type="string",)),
-*     @OA\RequestBody(
-*        required=true,
-*        description="Finds the <?=$model?> model to be updated based on its primary key value",
+*     @OA\RequestBody(required=true, description="<?=$model?> model data payload to be update",
 *        @OA\JsonContent(
 *           ref="#/components/schemas/<?=$model?>",
 *        ),
@@ -152,9 +145,23 @@ return [
 *     @OA\Parameter(description="<?= $model ?> unique ID to delete",in="path",name="id",required=true,@OA\Schema(type="string",)),
 *     @OA\Response(
 *         response=202,
-*         description="Deletion successful",
+*         description="<?=$item?> successful deletion",
 *         @OA\JsonContent(
-*           @OA\Property(property="dataPayload", type="object")
+*           @OA\Property(property="toastPayload", type="object",
+*               @OA\Property(property="toastMessage", type="string", example="<?=$model?> deleted successfully" ),
+*               @OA\Property(property="toastTheme", type="string", example="info"),
+*               @OA\Property(property="toastOptions", type="object")
+*           )
+*         )
+*     ),
+*    @OA\Response(
+*         response=404,
+*         description="Resource not found",
+*         @OA\JsonContent(
+*           @OA\Property(property="errorPayload", type="object",
+*               @OA\Property(property="statusCode", type="integer", example=404 ),
+*               @OA\Property(property="errorMessage", type="string", example="Not found")
+*           )
 *         )
 *     ),
 * )
@@ -162,36 +169,64 @@ return [
 'DELETE <?=$item?>/{id}'  => '<?=$item?>/delete',
 
 /**
-* @OA\Patch(path="/<?=$item?>/{id}",
+* @OA\Patch(path="/<?=$item?>/{id}/restore",
 *    tags={"<?=$model?>"},
 *    summary="Restores a deleted <?=$model?> model.",
 *     @OA\Parameter(description="<?= $model ?> unique ID to restore",in="path",name="id",required=true,@OA\Schema(type="string",)),
 *     @OA\Response(
 *         response=202,
-*         description="Restore successful",
+*         description="<?=$item?> successful restoration",
 *         @OA\JsonContent(
-*           @OA\Property(property="dataPayload", type="object")
+*           @OA\Property(property="toastPayload", type="object",
+*               @OA\Property(property="toastMessage", type="string", example="<?=$model?> restored successfully" ),
+*               @OA\Property(property="toastTheme", type="string", example="info"),
+*               @OA\Property(property="toastOptions", type="object")
+*           )
+*         )
+*     ),
+*    @OA\Response(
+*         response=404,
+*         description="Resource not found",
+*         @OA\JsonContent(
+*           @OA\Property(property="errorPayload", type="object",
+*               @OA\Property(property="statusCode", type="integer", example=404 ),
+*               @OA\Property(property="errorMessage", type="string", example="Not found")
+*           )
 *         )
 *     ),
 * )
 */
-'PATCH <?=$item?>/{id}'  => '<?=$item?>/restore',
+'PATCH <?=$item?>/{id}/restore'  => '<?=$item?>/restore',
 
 /**
-* @OA\Patch(path="/change-<?=$item?>-status/{id}",
+* @OA\Patch(path="/<?=$item?>/{id}/status",
 *    tags={"<?=$model?>"},
 *    summary="Changes status of  <?=$model?> model.",
 *   @OA\Parameter(description="<?= $model ?> unique ID to change status",in="path",name="id",required=true,@OA\Schema(type="string",)),
 *     @OA\Response(
 *         response=202,
-*         description="Status changed successful",
+*         description="<?=$item?> successful status change",
 *         @OA\JsonContent(
-*           @OA\Property(property="dataPayload", type="object")
+*           @OA\Property(property="toastPayload", type="object",
+*               @OA\Property(property="toastMessage", type="string", example="<?=$model?> status changed successfully" ),
+*               @OA\Property(property="toastTheme", type="string", example="info"),
+*               @OA\Property(property="toastOptions", type="object")
+*           )
+*         )
+*     ),
+*    @OA\Response(
+*         response=404,
+*         description="Resource not found",
+*         @OA\JsonContent(
+*           @OA\Property(property="errorPayload", type="object",
+*               @OA\Property(property="statusCode", type="integer", example=404 ),
+*               @OA\Property(property="errorMessage", type="string", example="Not found")
+*           )
 *         )
 *     ),
 * )
 */
-'PATCH change-<?=$item?>-status/{id}'  => '<?=$item?>/status',
+'PATCH <?=$item?>/{id}/status'  => '<?=$item?>/status',
 ];
 
 
