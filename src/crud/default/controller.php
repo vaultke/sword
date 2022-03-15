@@ -24,6 +24,18 @@ $urlParams = $generator->generateUrlParams();
 $actionParams = $generator->generateActionParams();
 $actionParamComments = $generator->generateActionParamComments();
 
+if (count($pks) === 1) {
+    $condition = '["'.strtolower($modelClass).'_crypt_id"=>$id]';
+    $conditionDel = '["'.strtolower($modelClass).'_crypt_id"=>$id, "is_deleted"=>false]';
+    $conditionRes = '["'.strtolower($modelClass).'_crypt_id"=>$id, "is_deleted"=>true]';
+} else {
+    $condition = [];
+    foreach ($pks as $pk) {
+        $condition[] = "'$pk' => \$$pk";
+    }
+    $condition = '[' . implode(', ', $condition) . ']';
+}
+
 echo "<?php\n";
 ?>
 
@@ -144,7 +156,10 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
             if(isset($dataRequest['<?= $modelClass ?>']['status'])){
                 $model->status = $dataRequest['<?= $modelClass ?>']['status'] ;
                 if($model->save(false)){
-                    return $this->payloadResponse($this->findModel($id),['statusCode'=>202,'message'=>'<?= $modelClass ?> status changed successfully']);
+                    if($model->status==9){ $status = 'deactivated';
+                    }elseif($model->status==10){ $status = 'activated';
+                    }else{ $status = 'status changed';}
+                    return $this->payloadResponse($this->findModel($id),['statusCode'=>202,'message'=>'<?= $modelClass ?> '.$status.' successfully']);
                 }
             }
             return $this->errorResponse($model->getErrors()); 
@@ -161,11 +176,12 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     public function actionDelete($id)
     {
         if(Yii::$app->user->can('<?=strtolower($_ENV['APP_CONTEXT'].'_'.$modelClass.'_delete')?>')){
-            $model = $this->findModel($id);
-            if(!$model->delete()){
-                return $this->toastResponse(['statusCode'=>202,'message'=>'<?= $modelClass ?> deleted successfully']);
-            };
-            return $this->errorResponse($model->getErrors()); 
+            if (($model = <?= $modelClass ?>::findOne(<?= $conditionDel ?>)) !== null) {
+                if(!$model->delete()){
+                    return $this->toastResponse(['statusCode'=>202,'message'=>'<?= $modelClass ?> deleted successfully']);
+                };
+            }
+            throw new NotFoundHttpException('The requested record is not available for deletion.');
         }
     }
 
@@ -179,11 +195,12 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     public function actionRestore($id)
     {
         if(Yii::$app->user->can('<?=strtolower($_ENV['APP_CONTEXT'].'_'.$modelClass.'_restore')?>')){
-            $model = $this->findModel($id);
-            if(!$model->restore()){
-                return $this->toastResponse(['statusCode'=>202,'message'=>'<?= $modelClass ?> restored successfully']);
-            };
-            return $this->errorResponse($model->getErrors()); 
+            if (($model = <?= $modelClass ?>::findOne(<?= $conditionRes ?>)) !== null) {
+                if(!$model->restore()){
+                    return $this->toastResponse(['statusCode'=>202,'message'=>'<?= $modelClass ?> restored successfully']);
+                };
+            }
+            throw new NotFoundHttpException('The requested record is not available for restoration.');
         }
     }
 
@@ -196,17 +213,6 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
      */
     protected function findModel($id)
     {
-<?php
-if (count($pks) === 1) {
-    $condition = '["'.strtolower($modelClass).'_crypt_id"=>$id]';
-} else {
-    $condition = [];
-    foreach ($pks as $pk) {
-        $condition[] = "'$pk' => \$$pk";
-    }
-    $condition = '[' . implode(', ', $condition) . ']';
-}
-?>
         if (($model = <?= $modelClass ?>::findOne(<?= $condition ?>)) !== null) {
             return $model;
         }

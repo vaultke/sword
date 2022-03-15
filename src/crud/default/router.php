@@ -139,7 +139,7 @@ return [
 'PUT <?=$item?>/{id}'     => '<?=$item?>/update',
 
 /**
-* @OA\Delete(path="/<?=$item?>/{id}",
+* @OA\Delete(path="/<?=$item?>/soft/{id}",
 *    tags={"<?=$model?>"},
 *    summary="Deletes an existing <?=$model?> model.",
 *     @OA\Parameter(description="<?= $model ?> unique ID to delete",in="path",name="id",required=true,@OA\Schema(type="string",)),
@@ -166,10 +166,10 @@ return [
 *     ),
 * )
 */
-'DELETE <?=$item?>/{id}'  => '<?=$item?>/delete',
+'DELETE <?=$item?>/soft/{id}'  => '<?=$item?>/delete',
 
 /**
-* @OA\Patch(path="/<?=$item?>/{id}/restore",
+* @OA\Patch(path="/<?=$item?>/restore/{id}",
 *    tags={"<?=$model?>"},
 *    summary="Restores a deleted <?=$model?> model.",
 *     @OA\Parameter(description="<?= $model ?> unique ID to restore",in="path",name="id",required=true,@OA\Schema(type="string",)),
@@ -196,13 +196,20 @@ return [
 *     ),
 * )
 */
-'PATCH <?=$item?>/{id}/restore'  => '<?=$item?>/restore',
+'PATCH <?=$item?>/restore/{id}'  => '<?=$item?>/restore',
 
 /**
-* @OA\Patch(path="/<?=$item?>/{id}/status",
+* @OA\Patch(path="/<?=$item?>/status/{id}",
 *    tags={"<?=$model?>"},
 *    summary="Changes status of  <?=$model?> model.",
 *   @OA\Parameter(description="<?= $model ?> unique ID to change status",in="path",name="id",required=true,@OA\Schema(type="string",)),
+*     @OA\RequestBody(
+*        required=true,
+*        description="Value for status must be an integer",
+*        @OA\JsonContent(
+*            @OA\Property(property="status", type="integer", example="9" ),
+*        ),
+*     ),
 *     @OA\Response(
 *         response=202,
 *         description="<?=$item?> successful status change",
@@ -226,7 +233,7 @@ return [
 *     ),
 * )
 */
-'PATCH <?=$item?>/{id}/status'  => '<?=$item?>/status',
+'PATCH <?=$item?>/status/{id}'  => '<?=$item?>/status',
 ];
 
 
